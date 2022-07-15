@@ -53,10 +53,10 @@ export const setCurrentUser = (currentUser) => {
     }
 }
 
-export const setActiveRoute = (routeName) => {
+export const setActiveRoute = (route) => {
     return {
         type: SET_ACTIVE_ROUTE,
-        payload: routeName  
+        payload: route  
     }      
 }
 

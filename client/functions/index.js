@@ -3,6 +3,7 @@ const functions = require('firebase-functions');
 // const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore');
 
 const admin = require('firebase-admin');
+const e = require('express');
 //const { db } = require('../src/firebase');
 admin.initializeApp();
 
@@ -75,16 +76,40 @@ id, {...nonAdminFields}, {...adminFields} <- this is repeated data, but makes fo
 
 //createItem works. Next make update and delete functions
 exports.createItem = functions.firestore
-  .document('admin/admin_lists/{collection}/{ItemID}')
+  .document('admin/admin_lists/{collection}/{itemID}')
   .onCreate((snap, context) => {
+    const { collection, itemID} = context.params
     const newItem = snap.data()
-    const newCollection = context.params.collection.substring(6) //removes 'Admin_' from collection to assign the non-admin collection
-    return admin.firestore().collection(newCollection).add({...newItem.nonAdminFields, admin_key: context.params.ItemID})
+    return admin.firestore().collection(`driver/driver_lists/${collection}`).add({...newItem.nonAdminFields, admin_key: itemID})
     .then(doc => {
       return doc
     })
     .catch((e) => {return e})  
 })
+
+exports.updateItem = functions.firestore
+  .document('admin/admin_lists/{collection}/{itemID}')
+  .onUpdate(async(change, context) => {
+    const { collection, itemID} = context.params
+    const updatedItem = change.after.data()
+    const ref = admin.firestore().collection(`driver/driver_lists/${collection}`)
+    const snapshot = await ref.where('admin_key', '==', itemID).get()
+    snapshot.forEach(item => {
+      admin.firestore().collection(`driver/driver_lists/${collection}`).doc(item.id).set({...updatedItem.nonAdminFields}, { merge: true })    
+    })
+  }) 
+
+exports.deleteItem = functions.firestore
+.document('admin/admin_lists/{collection}/{itemID}')
+.onDelete(async(snap, context) => {
+  const { collection, itemID} = context.params
+  const ref = admin.firestore().collection(`driver/driver_lists/${collection}`)
+  const snapshot = await ref.where('admin_key', '==', itemID).get()
+  snapshot.forEach(item => {
+    admin.firestore().collection(`driver/driver_lists/${collection}`).doc(item.id).delete()      
+  })
+})
+
 
 exports.deleteDriver = functions.firestore
   .document('admin_driver/{driverID}')
@@ -97,16 +122,17 @@ exports.deleteDriver = functions.firestore
   })
 
   // TODO fix this so it updates only the non-admin fields in driver
-  exports.updateDriver = functions.firestore
-    .document('/admin_driver/{driverID}')
-    .onUpdate(async(change, context) => {
-      const updatedDriver = change.after.data()
-      const ref = admin.firestore().collection('driver')
-      const snapshot = await ref.where('admin_key', '==', context.params.driverID).get()
-      snapshot.forEach(item => {
-        admin.firestore().collection('driver').doc(item.id).set({name: updatedDriver.name, active: updatedDriver.active, admin_key: context.params.driverID})    
-      })  
-    })
+  // nope this is trash
+exports.updateDriver = functions.firestore
+  .document('/admin_driver/{driverID}')
+  .onUpdate(async(change, context) => {
+    const updatedDriver = change.after.data()
+    const ref = admin.firestore().collection('driver')
+    const snapshot = await ref.where('admin_key', '==', context.params.driverID).get()
+    snapshot.forEach(item => {
+      admin.firestore().collection('driver').doc(item.id).set({name: updatedDriver.name, active: updatedDriver.active, admin_key: context.params.driverID})    
+    })  
+  })
 
 
 

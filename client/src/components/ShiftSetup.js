@@ -77,11 +77,14 @@ const ShiftSetup = () => {
     }
 
     const onEditAdmin = (item, whichModal, collection) => {
+        
         getAdminItem(item, collection)
         .then(item => {
+            console.log(item)
             dispatch(setTempItem(item))
+            dispatch(showModal(whichModal))
         })        
-        dispatch(showModal(whichModal))
+        
     }
     const onEdit = (item, whichModal) => {
         dispatch(setTempItem(item))
@@ -89,6 +92,7 @@ const ShiftSetup = () => {
     }
     
     const onSelect = (event, itemArray, setActiveAction) => {
+        console.log(event)
         dispatch(setActiveItem(event, itemArray, setActiveAction))
     }
 

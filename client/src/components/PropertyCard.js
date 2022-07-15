@@ -129,7 +129,6 @@ const PropertyCard = (props) => {
             newItems[routeData.findIndex(item => item.property_key === updated[0].property_key)].active = updated[0].active
            // dispatch({ type: ROUTE_DATA_SUCCESS, payload: newItems})
            // dispatch(requestAllAddresses())
-            props.refreshData()
         })
         .catch(err => dispatch({ type: GET_ITEMS_FAILED, payload: err}))
     }

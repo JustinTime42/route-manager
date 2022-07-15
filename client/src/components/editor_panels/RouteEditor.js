@@ -14,7 +14,7 @@
 
         useEffect(() => {
             if(!('name' in tempItem) && modals.includes('Route')) {
-                dispatch(setTempItem({name: '', active: true}))
+                dispatch(setTempItem({name: '', active: true, customers: {}}))
             }
         },[tempItem])
 

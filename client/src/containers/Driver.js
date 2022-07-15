@@ -18,6 +18,7 @@ import {REQUEST_ROUTES_SUCCESS, SET_ACTIVE_PROPERTY, SET_ACTIVE_ROUTE} from '../
 
 import '../styles/driver.css'
 import UserEditor from '../components/editor_panels/UserEditor';
+import RouteBuilder from './route_builder/RouteBuilder';
 
 const Driver = () => {
     const showRouteEditor = useSelector(state => state.showRouteEditor.showEditor)
@@ -64,6 +65,8 @@ const Driver = () => {
                     bill_zip: item.bill_zip,
                     tags: item.tags,
                     service_level: item.service_level,
+                    contract_type: item.contract_type,
+                    sand_contract_type: item.sand_contract,
                 },
                 adminFields: {
                     snow_price: item.price,
@@ -72,8 +75,6 @@ const Driver = () => {
                     value: item.value,
                     price_per_yard: item.price_per_yard,
                     season_price: item.season_price,
-                    contract_type: item.contract_type,
-                    sand_contract_type: item.sand_contract,
                     Sander: item.Sander,
                     'Work Truck (1 laborer)': item['Work Truck (1 laborer)'],
                     'Tractor with snow blower': item['Tractor with snow blower'],
@@ -178,7 +179,7 @@ const Driver = () => {
                 <Button variant="primary" size="sm" onClick={refreshData}>Refresh</Button>
             </div>
             { 
-            showRouteEditor ? <EditRoute /> : 
+            showRouteEditor ? <RouteBuilder /> : 
             activeTractor.name && (activeDriver.key !== '')  && activeWorkType.name ? <DisplayRoute /> :
             <Alert variant="warning">Please select route, driver, vehicle, and work type to begin.</Alert>                              
             }             

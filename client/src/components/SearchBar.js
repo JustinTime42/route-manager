@@ -53,7 +53,7 @@ const SearchBar = () => {
     }
 
     const onSetMatches = () => {
-        if (searchValue.length > 1 ) {
+        if (searchValue.length > 0 ) {
             const filteredCustomers = allCustomers.filter(customer => {
                 if(customer.cust_name?.toLowerCase().includes(searchValue.toLowerCase()) ||
                 customer.address?.toLowerCase().includes(searchValue.toLowerCase()) ||
